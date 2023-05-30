@@ -72,9 +72,7 @@ def mostrar_lista_de_jugadores(lista_jugadores: list, clave_1, clave_2) -> None:
         print(f"{jugador[clave_1]} - {jugador[clave_2]}")
 
 
-# 2º ---------------------------------------------------------------------
-
-
+# 2º ---------------------------------------------------------------------------------
 def mostrar_estadisticas_completas_de_jugador(lista_jugadores: list, key: str) -> int:
     """
     Muestra las estadísticas de un jugador específico y devuelve su índice en la lista.
@@ -665,14 +663,29 @@ def calcular_jugador_con_mas_logros(lista_jugadores: list, key: str):
         key (str): La categoría de logros (por ejemplo, "logros_nba", "logros_all_star", etc.).
     """
     bubble_sort_lite_v2(lista_jugadores, key, "mayor")
-    print(
-        "{0} {1} {2}".format(
-            lista_jugadores[-1]["nombre"], len(lista_jugadores[-1][key]), key
-        )
-    )
+    jugador_con_mas_logros = lista_jugadores[0]
+    contador_mas_logros = 0
+    for jugador in lista_jugadores:
+        contador = 0
+        for logro in jugador[key]:
+            if re.match(r'^[0-9]+',logro):
+                lista = re.findall(r'^[0-9]+',logro)
+                contador += int(lista[0])
+            else:
+                contador += 1
+            print(logro)
+        print(contador)
+        separador()
+        if(contador > contador_mas_logros):
+            jugador_con_mas_logros = jugador
+            contador_mas_logros = contador
+    
+    print('''\n---------------- JUGADOR CON MAS LOGROS ----------------
+          {0} {1} {2}.'''.format(jugador_con_mas_logros["nombre"],contador_mas_logros,key))
+    
 
 # 20 ---------------------------------------------------------------------------------------
-def mostrar_jugadores_ordenados_por_posicion(lista_jugadores, key):
+def mostrar_jugadores_ordenados_por_posicion(lista_jugadores:list, key:str):
     """
     Muestra los jugadores ordenados por posición y filtrados según un valor numérico ingresado.
 
