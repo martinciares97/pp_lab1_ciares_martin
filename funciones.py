@@ -1,5 +1,7 @@
 import json, re, os, copy
 from functools import reduce
+from main import *
+
 
 """
 __________________________________
@@ -17,14 +19,75 @@ def print_menu(lista_opciones):
         print(f"• {option+1}. {lista_opciones[option]}")
 
 
+def imprimir_menu():
+    """
+    Imprime un menú de opciones basado en los puntos especificados.
+
+    Returns:
+        int: La opción seleccionada por el usuario.
+    """
+    print("------- Menú de Opciones -------")
+    print("1. Mostrar la lista de todos los jugadores del Dream Team")
+    print("2. Mostrar estadísticas completas de un jugador seleccionado")
+    print("3. Guardar estadísticas de un jugador en un archivo CSV")
+    print("4. Buscar un jugador por su nombre y mostrar sus logros")
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print()
+    print("14. Calcular el jugador con la mayor cantidad de bloqueos totales")
+    print(
+        "15. Mostrar jugadores con un porcentaje de tiros libres superior a un valor dado"
+    )
+    print(
+        "16. Calcular el promedio de puntos por partido del equipo excluyendo al jugador con menos puntos"
+    )
+    print("17. Calcular el jugador con la mayor cantidad de logros obtenidos")
+    print(
+        "18. Mostrar jugadores con un porcentaje de tiros triples superior a un valor dado"
+    )
+    print("19. Calcular el jugador con la mayor cantidad de temporadas jugadas")
+    print(
+        "20. Mostrar jugadores con un porcentaje de tiros de campo superior a un valor dado"
+    )
+    print("---------------------------------")
+
+    opcion = int(input("Seleccione una opción (1-20): "))
+    return opcion
+
+
 def menu_app(lista_jugadores):
     lista_indice_jugadores = []
     while True:
         lista_opciones = [
-            "Mostrar la plantilla de jugadores del Dream Team",
-            "Mostrar estadisticas de un jugador seleccionado",
-            "Guardar .csv con las estadísticas de un jugador seleccionado",
-            "Mostrar logros de un jugador seleccionado.",
+            "Mostrar la lista de todos los jugadores del Dream Team",
+            "Mostrar estadísticas completas de un jugador seleccionado",
+            "Guardar estadísticas de un jugador en un archivo CSV",
+            "Buscar un jugador por su nombre y mostrar sus logros",
+            "Calcular el promedio de puntos por partido de todo el equipo del Dream Team",
+            "Verificar si un jugador es miembro del Salón de la Fama del Baloncesto",
+            "Calcular el jugador con la mayor cantidad de rebotes totales",
+            "Calcular el jugador con el mayor porcentaje de tiros de campo",
+            "Calcular el jugador con la mayor cantidad de asistencias totales",
+            "Mostrar jugadores que promedian más puntos por partido que un valor dado",
+            "Mostrar jugadores que promedian más rebotes por partido que un valor dado",
+            "Mostrar jugadores que promedian más asistencias por partido que un valor dado",
+            "Calcular el jugador con la mayor cantidad de robos totales",
+            "Calcular el jugador con la mayor cantidad de bloqueos totales",
+            "Mostrar jugadores con un porcentaje de tiros libres superior a un valor dado",
+            "Calcular el promedio de puntos por partido del equipo excluyendo al jugador con menos puntos",
+            "Calcular el jugador con la mayor cantidad de logros obtenidos",
+            "Mostrar jugadores con un porcentaje de tiros triples superior a un valor dado",
+            "Calcular el jugador con la mayor cantidad de temporadas jugadas",
+            "Mostrar jugadores con un porcentaje de tiros de campo superior a un valor dado",
+            "",
+            "",
+            "BONUS: Calcular posición en cada ranking y exportar a CSV",
         ]
         print_menu(lista_opciones)
         option = ingresar_opcion()
@@ -545,21 +608,6 @@ def mostrar_promedio_de_puntos_por_partido(main_list):
 
 
 # 23 BONUS ---------------------------------------------------------------------------
-"""
-Calcular de cada jugador cuál es su posición en cada uno de los siguientes ranking
-    • Puntos 
-    • Rebotes 
-    • Asistencias 
-    • Robos
-Exportar a csv.
-
-Ejemplo
-Jugador         Puntos      Rebotes     Asistencias     Robos
-Michael Jordan      1           1           1           2
-Magic               2           3           4           4  
-"""
-
-
 def exportar_tabla_posiciones_csv(lista_jugadores: list, nombre_archivo: str) -> None:
     """
     Calcula la posición de cada jugador en los rankings de puntos, rebotes, asistencias y robos,
@@ -609,6 +657,17 @@ def calcular_posicion(lista_jugadores: list, key: str, indice_jugador: int) -> i
 
 
 def llamada_punto_23(lista_jugadores: list) -> None:
+    """
+    Calcula la posición de cada jugador en los rankings de puntos, rebotes, asistencias y robos,
+    y exporta los resultados a un archivo CSV.
+
+    Args:
+        lista_jugadores (list): Una lista de jugadores representados como diccionarios.
+                                Cada jugador contiene un nombre y estadísticas de puntos, rebotes, asistencias y robos.
+
+    Returns:
+        None
+    """
     lista_encabezado = ["Nombre", "Puntos", "Rebotes", "Asistencias", "Robos"]
     exportar_tabla_posiciones_csv(lista_encabezado, "ranking_de_posiciones.csv")
 
@@ -635,7 +694,7 @@ def llamada_punto_23(lista_jugadores: list) -> None:
         )
 
 
-"--------------------------------------- END ---------------------------------------"
+"--------------------------------------- MAIN ---------------------------------------"
 
 
 def main():
@@ -646,34 +705,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-Examen parcial 
-
-Escribe un programa en Python que cargue la información de los jugadores del Dream Team desde un archivo JSON y realice las siguientes tareas, teniendo en cuenta que cada una de ellas deberá de ser realizada por una función diferente:
-
-
-1) Mostrar la lista de todos los jugadores del Dream Team. Con el formato:
-Nombre Jugador - Posición. Ejemplo:
-Michael Jordan - Escolta
-2) Permitir al usuario seleccionar un jugador por su índice y mostrar sus estadísticas completas, incluyendo temporadas jugadas, puntos totales, promedio de puntos por partido, rebotes totales, promedio de rebotes por partido, asistencias totales, promedio de asistencias por partido, robos totales, bloqueos totales, porcentaje de tiros de campo, porcentaje de tiros libres y porcentaje de tiros triples.
-3) Después de mostrar las estadísticas de un jugador seleccionado por el usuario, permite al usuario guardar las estadísticas de ese jugador en un archivo CSV. El archivo CSV debe contener los siguientes campos: nombre, posición, temporadas, puntos totales, promedio de puntos por partido, rebotes totales, promedio de rebotes por partido, asistencias totales, promedio de asistencias por partido, robos totales, bloqueos totales, porcentaje de tiros de campo, porcentaje de tiros libres y porcentaje de tiros triples.
-4) Permitir al usuario buscar un jugador por su nombre y mostrar sus logros, como campeonatos de la NBA, participaciones en el All-Star y pertenencia al Salón de la Fama del Baloncesto, etc.
-"""
-
-"""
-23) Bonus 
-
-Calcular de cada jugador cuál es su posición en cada uno de los siguientes ranking
-    • Puntos 
-    • Rebotes 
-    • Asistencias 
-    • Robos
-
-Exportar a csv.
-
-Ejemplo
-Jugador         Puntos      Rebotes     Asistencias     Robos
-Michael Jordan      1           1           1           2
-Magic               2           3           4           4  
-"""
