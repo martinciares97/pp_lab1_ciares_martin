@@ -1,17 +1,13 @@
-import json
-import re
-import os
-import copy
-import platform
-import time
+import json, re, os, copy
 from functools import reduce
 
 """
-PRIMER PARCIAL
-
-Apellido: Ciares
-Nombre: Martin Maximiliano
-DNI: 43014500
+__________________________________
+PRIMER PARCIAL:
+    • APELLIDO: CIARES
+    • NOMBRE: MARTIN MAXIMILIANO
+    • DNI: 43.014.500
+__________________________________
 """
 
 
@@ -23,63 +19,63 @@ def limpiar_consola():
 
     No retorna ningún valor.
     """
-    input("\nPresione Enter para continuar...")
-    if os.name == "posix":
-        os.system("clear")
-    elif os.name == "nt":
+    input("\nPresiona Enter para continuar...")
+    if os.name == "nt":
         os.system("cls")
 
 
-def limpiar_pantalla():
+def parse_json(nombre_archivo: str, key: str) -> list:
     """
-    Limpia la pantalla según el sistema operativo y añade un retraso.
-
-    No recibe argumentos.
-
-    No retorna ningún valor.
-    """
-    if platform.system() == "Windows":
-        os.system("cls & echo.")
-        time.sleep(0.1)
-    else:
-        os.system("clear; printf '\033c'")
-        time.sleep(0.1)
-
-
-def parse_json(nombre_archivo: str):
-    """
-    Parsea un archivo JSON y devuelve una lista de jugadores.
+    Carga un archivo JSON y devuelve el valor asociado a una clave específica.
 
     Args:
-        nombre_archivo (str): El nombre del archivo JSON a parsear.
+        nombre_archivo (str): Una cadena de texto que representa el nombre del archivo JSON a cargar.
+        key (str): Una cadena de texto que representa la clave cuyo valor se desea extraer del archivo JSON.
 
-    Returns:
-        list: Una lista de jugadores.
+    Return:
+        Una lista que contiene el valor asociado a la clave especificada.
+
+    Exception:
+        Si ocurre algún error al cargar el archivo JSON, se muestra el mensaje "Error. No se pudo cargar
+        el JSON".
     """
-    lista = []
-    with open(nombre_archivo, "r", encoding="utf-8") as file:
-        diccionario = json.load(file)
-        lista = diccionario["jugadores"]
-        return lista
+    try:
+        lista_jugadores = []
+        with open(nombre_archivo, "r", encoding="utf-8") as archivo:
+            contenido = json.load(archivo)
+            if key in contenido:
+                lista_jugadores = contenido[key]
+            else:
+                print(f"No se encontro la clave {key} en el JSON")
+            return lista_jugadores
+    except Exception:
+        print("Error. No se pudo cargar el JSON")
 
 
-# /////////////////////////////////// EJERCICIOS /////////////////////////////////////////
-def mostrar_lista_jugadores(lista_jugadores: list) -> None:
+"--------------------------------------- EJERCICIOS ---------------------------------------"
+
+
+# 1º ---------------------------------------------------------------------------------
+def mostrar_lista_de_jugadores(lista_jugadores: list, clave_1, clave_2) -> None:
     """
-    Muestra la lista de todos los jugadores del equipo.
+    Muestra la plantilla de jugadores del Dream Team
 
     Args:
-        lista_jugadores (list): Una lista de jugadores.
+        lista_jugadores (list): La lista de jugadores a imprimir.
 
-    Returns:
+    Return:
         None
     """
-    print("NOMBRE JUGADOR - POSICIÓN\n")
-    for player in lista_jugadores:
-        print(f"{player['nombre']} - {player['posicion']}")
+
+    print(f"\n{clave_1} {clave_2}".upper())
+    for jugador in lista_jugadores:
+        print(f"{jugador[clave_1]} - {jugador[clave_2]}")
 
 
-def mostrar_estadisticas_por_jugador(lista_jugadores: list) -> int:
+# 2º ---------------------------------------------------------------------
+
+
+def mostrar_estadisticas_completas_de_jugador(lista_jugadores: list, key: str) -> int:
     """
     Muestra las estadísticas de un jugador específico y devuelve su índice en la lista.
 
@@ -91,14 +87,14 @@ def mostrar_estadisticas_por_jugador(lista_jugadores: list) -> int:
     """
     while True:
         indice = input(
-            "Ingrese el indice del jugador que deseas mostrar sus estadisticas: "
+            "\nIngrese el indice del jugador que deseas mostrar sus estadisticas: "
         )
         if re.match(r"^[0-9]+$", indice):
             indice = int(indice)
             if indice < len(lista_jugadores):
-                player = lista_jugadores[indice]["estadisticas"]
+                player = lista_jugadores[indice][key]
 
-                print(f'ESTADISTICAS DE {lista_jugadores[indice]["nombre"].upper()}\n')
+                print(f'{key} DE {lista_jugadores[indice]["nombre"].upper()}\n')
                 for clave, valor in player.items():
                     print(f"{reemplazar_guion_bajo(clave)} {valor}")
                 return indice
@@ -129,7 +125,7 @@ def guardar_estadisticas_jugador(lista_jugadores: list):
     Returns:
         None
     """
-    indice_player = mostrar_estadisticas_por_jugador(lista_jugadores)
+    indice_player = mostrar_estadisticas_completas_de_jugador(lista_jugadores)
     nombre_archivo = definir_nombre_archivo(lista_jugadores, indice_player)
     exportar_csv(nombre_archivo, lista_jugadores, indice_player)
 
@@ -158,9 +154,7 @@ def exportar_csv(nombre_archivo: str, lista_jugadores: list, indice: int):
                 lista_jugadores[indice]["estadisticas"]["rebotes_totales"],
                 lista_jugadores[indice]["estadisticas"]["promedio_rebotes_por_partido"],
                 lista_jugadores[indice]["estadisticas"]["asistencias_totales"],
-                lista_jugadores[indice]["estadisticas"][
-                    "promedio_asistencias_por_partido"
-                ],
+                lista_jugadores[indice]["estadisticas"]["promedio_asistencias_por_partido"],
                 lista_jugadores[indice]["estadisticas"]["robos_totales"],
                 lista_jugadores[indice]["estadisticas"]["bloqueos_totales"],
                 lista_jugadores[indice]["estadisticas"]["porcentaje_tiros_de_campo"],
@@ -227,43 +221,22 @@ def print_logros_de_jugador(lista_jugadores: list) -> None:
             print(f"{logro}")
 
 
-def mostrar_logros_del_jugador(lista_jugadores: list):
+def mostrar_logros_del_jugador(lista_jugadores: list)-> None:
     """
-    4) Permitir al usuario buscar un jugador por su nombre y mostrar sus logros, como
-    campeonatos de la NBA, participaciones en el All-Star y pertenencia al Salón de la
-    Fama del Baloncesto, etc.
+    Muestra los logros de un jugador específico.
+
+    Esta función recibe una lista de jugadores y una clave para buscar el jugador
+    por su nombre. Luego, busca al jugador en la lista y muestra sus logros.
+
+    Args:
+        lista_jugadores (list): Una lista de jugadores con sus estadísticas.
+        key (str): El nombre del jugador a buscar.
+
+    Returns:
+        None
     """
     lista_jugadores_por_nombre = buscar_jugador_por_nombre(lista_jugadores)
     print_logros_de_jugador(lista_jugadores_por_nombre)
-
-
-""" 
-def bubble_sort(lista_jugadores: list, key: str, sentido: str):
-    flag_swap = True
-    rango = len(lista_jugadores)
-    while flag_swap:
-        rango = rango - 1
-        flag_swap = False
-        for indice in range(rango):
-            if sentido == "mayor":
-                if (
-                    lista_jugadores[indice]["estadisticas"][key]
-                    > lista_jugadores[indice + 1]["estadisticas"][key]
-                ):
-                    lista_jugadores[indice], lista_jugadores[indice + 1] = (
-                        lista_jugadores[indice + 1],
-                        lista_jugadores[indice],
-                    )
-            else:
-                if (
-                    lista_jugadores[indice]["estadisticas"][key]
-                    < lista_jugadores[indice + 1]["estadisticas"][key]
-                ):
-                    lista_jugadores[indice], lista_jugadores[indice + 1] = (
-                        lista_jugadores[indice + 1],
-                        lista_jugadores[indice],
-                    )
- """
 
 
 def bubble_sort_lite(lista_jugadores: list, key: str, sentido: str):
@@ -473,7 +446,9 @@ def separador():
     """
     Imprime un separador visual en la consola.
     """
-    print("_____________________________________________________")
+    print(
+        "____________________________________________________________________________"
+    )
 
 
 def calcular_jugador_con_la_mejor_estadistica(lista_jugadores: list, key: str):
@@ -696,7 +671,7 @@ def calcular_jugador_con_mas_logros(lista_jugadores: list, key: str):
         )
     )
 
-
+# 20 ---------------------------------------------------------------------------------------
 def mostrar_jugadores_ordenados_por_posicion(lista_jugadores, key):
     """
     Muestra los jugadores ordenados por posición y filtrados según un valor numérico ingresado.
@@ -794,19 +769,18 @@ def llamada_punto_23(lista_jugadores: list) -> None:
         lista_jugador_posiciones.append(
             calcular_posicion(lista_jugadores, "robos_totales", indice)
         )
-        separador()
-        print(indice)
-        print(lista_jugador_posiciones)
         exportar_tabla_posiciones_csv(
             lista_jugador_posiciones, "ranking_de_posiciones.csv"
         )
+    separador()
+    print('Se creo el archivo CSV.')
 
 
 "--------------------------------------- END ---------------------------------------"
 
 
-# ///////////////////////////////////////////////////////////////////////////////////
 def print_menu():
+    separador()
     menu = [
         "Mostrar la lista de todos los jugadores del Dream Team",
         "Mostrar estadísticas completas de un jugador seleccionado",
@@ -832,32 +806,9 @@ def print_menu():
         "",
         "BONUS: Calcular posición en cada ranking y exportar a CSV",
     ]
-    print(
-        """------ Menú ------)
-•  1. Mostrar la plantilla de jugadores del Dream Team.
-• 02. Seleccionar jugador y mostrar estadísticas
-•  2. Mostrar estadísticas de un jugador.
-•  3. Guardar estadísticas de un jugador en un archivo.CSV
-•  4. Buscar jugador por nombre y mostrar logros
-•  5. Calcular y mostrar el promedio de puntos por partido del equipo
-•  6. Verificar si un jugador es miembro del Salón de la Fama
-•  7. Calcular y mostrar el jugador con la mayor cantidad de rebotes totales
-•  8. Calcular y mostrar el jugador con el mayor porcentaje de tiros de campo
-•  9. Calcular y mostrar el jugador con la mayor cantidad de asistencias totales
-• 10. Filtrar jugadores por promedio de puntos por partido
-• 11. Filtrar jugadores por promedio de rebotes por partido
-• 12. Filtrar jugadores por promedio de asistencias por partido
-• 13. Calcular y mostrar el jugador con la mayor cantidad de robos totales
-• 14. Calcular y mostrar el jugador con la mayor cantidad de bloqueos totales
-• 15. Filtrar jugadores por porcentaje de tiros libres
-• 16. Calcular y mostrar el promedio de puntos por partido del equipo excluyendo al jugador con la menor cantidad de puntos por partido
-• 17. Calcular y mostrar el jugador con la mayor cantidad de logros obtenidos
-• 18. Filtrar jugadores por porcentaje de tiros triples
-• 19. Calcular y mostrar el jugador con la mayor cantidad de temporadas jugadas
-• 20. Filtrar jugadores por porcentaje de tiros de campo
-• 23. Bonus.
-•  0. Salir"""
-    )
+    for indice in range(len(menu)):
+        print(f"• {indice+1} {menu[indice]}")
+    separador()
 
 
 def menu_app(lista_jugadores):
@@ -870,14 +821,13 @@ def menu_app(lista_jugadores):
     """
     while True:
         limpiar_consola()
-        limpiar_pantalla()
         print_menu()
         option = input("\nSeleccione una de las siguientes opciones: ")
         match option:
             case "1":
-                mostrar_lista_jugadores(lista_jugadores)
+                mostrar_lista_de_jugadores(lista_jugadores, "nombre", "posicion")
             case "2":
-                mostrar_estadisticas_por_jugador(lista_jugadores)
+                mostrar_estadisticas_completas_de_jugador(lista_jugadores, "estadisticas")
             case "3":
                 guardar_estadisticas_jugador(lista_jugadores)
             case "4":
@@ -887,51 +837,29 @@ def menu_app(lista_jugadores):
             case "6":
                 mostrar_si_es_miembro(lista_jugadores)
             case "7":
-                calcular_jugador_con_la_mejor_estadistica(
-                    lista_jugadores, "rebotes_totales"
-                )
+                calcular_jugador_con_la_mejor_estadistica(lista_jugadores, "rebotes_totales")
             case "8":
-                calcular_jugador_con_la_mejor_estadistica(
-                    lista_jugadores, "porcentaje_tiros_de_campo"
-                )
+                calcular_jugador_con_la_mejor_estadistica(lista_jugadores, "porcentaje_tiros_de_campo")
             case "9":
-                calcular_jugador_con_la_mejor_estadistica(
-                    lista_jugadores, "asistencias_totales"
-                )
+                calcular_jugador_con_la_mejor_estadistica(lista_jugadores, "asistencias_totales")
             case "10":
-                mostrar_jugadores_filtrados_segun_valor_ingresado(
-                    lista_jugadores, "promedio_puntos_por_partido"
-                )
+                mostrar_jugadores_filtrados_segun_valor_ingresado(lista_jugadores, "promedio_puntos_por_partido")
             case "11":
-                mostrar_jugadores_filtrados_segun_valor_ingresado(
-                    lista_jugadores, "promedio_rebotes_por_partido"
-                )
+                mostrar_jugadores_filtrados_segun_valor_ingresado(lista_jugadores, "promedio_rebotes_por_partido")
             case "12":
-                mostrar_jugadores_filtrados_segun_valor_ingresado(
-                    lista_jugadores, "promedio_asistencias_por_partido"
-                )
+                mostrar_jugadores_filtrados_segun_valor_ingresado(lista_jugadores, "promedio_asistencias_por_partido")
             case "13":
-                calcular_jugador_con_mayor_cantidad(
-                    lista_jugadores, "robos_totales", "mayor"
-                )
+                calcular_jugador_con_mayor_cantidad(lista_jugadores, "robos_totales", "mayor")
             case "14":
-                calcular_jugador_con_mayor_cantidad(
-                    lista_jugadores, "bloqueos_totales", "mayor"
-                )
+                calcular_jugador_con_mayor_cantidad(lista_jugadores, "bloqueos_totales", "mayor")
             case "15":
-                mostrar_jugadores_filtrados_segun_valor_ingresado(
-                    lista_jugadores, "porcentaje_tiros_libres"
-                )
+                mostrar_jugadores_filtrados_segun_valor_ingresado(lista_jugadores, "porcentaje_tiros_libres")
             case "16":
-                calcular_ppp_excluyente(
-                    lista_jugadores, "promedio_puntos_por_partido", "desc"
-                )
+                calcular_ppp_excluyente(lista_jugadores, "promedio_puntos_por_partido", "desc")
             case "17":
                 calcular_jugador_con_mas_logros(lista_jugadores, "logros")
             case "18":
-                mostrar_jugadores_filtrados_segun_valor_ingresado(
-                    lista_jugadores, "porcentaje_tiros_triples"
-                )
+                mostrar_jugadores_filtrados_segun_valor_ingresado(lista_jugadores, "porcentaje_tiros_triples")
             case "19":
                 calcular_jugador_con_la_mejor_estadistica(lista_jugadores, "temporadas")
             case "20":
@@ -941,13 +869,13 @@ def menu_app(lista_jugadores):
             case "0":
                 break
 
-        limpiar_consola()
-        limpiar_pantalla()
-
 
 def crear_lista_principal():
     ruta = r"C:\Users\mciar\OneDrive\Documentos\UTN\01_primer_cuatrimestre\laboratorio_programacion_1\clase_05_23_parcial\dt.json"
-    return parse_json(ruta)
+    return parse_json(ruta, "jugadores")
+
+
+'////////////////////////////////////////////////////////////////////////////////////////'
 
 
 def main():

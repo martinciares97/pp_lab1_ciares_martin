@@ -1,11 +1,9 @@
-from funciones import *
+from funciones_incompleto import *
 import copy
 
 
 def main():
-    main_list = crear_lista_jugadores()
-    deep_copy = copy.deepcopy(main_list)
-    menu_app(deep_copy)
+    pass
 
 
 if __name__ == "__main__":
