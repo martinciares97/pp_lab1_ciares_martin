@@ -426,6 +426,15 @@ def mostrar_si_es_miembro(lista_jugadores: list) -> None:
         print(message)
 
 
+def separador():
+    """
+    Imprime un separador visual en la consola.
+    """
+    print(
+        "____________________________________________________________________________"
+    )
+
+
 def mostrar_jugador_con_la_mejor_estadistica(lista_jugadores: list, key: str):
     """
     Muestra el jugador con la mejor estadística en la categoría especificada.
@@ -435,18 +444,12 @@ def mostrar_jugador_con_la_mejor_estadistica(lista_jugadores: list, key: str):
         key (str): La categoría de estadística (por ejemplo, "puntos_totales", "rebotes_totales", etc.).
     """
     print(
-        f"""\nJUGADOR CON MAS {key.upper()}
-          {lista_jugadores[-1]['nombre']} {lista_jugadores[-1]['estadisticas'][key]} {key}"""
-    )
+        f"""\nMayor cantidad de {key}: {lista_jugadores[-1]['nombre']} ({lista_jugadores[-1]['estadisticas'][key]})""")
 
-
-def separador():
-    """
-    Imprime un separador visual en la consola.
-    """
-    print(
-        "____________________________________________________________________________"
-    )
+    # print(
+    #     f"""\nJUGADOR CON MAS {key.upper()}
+    #       {lista_jugadores[-1]['nombre']} {lista_jugadores[-1]['estadisticas'][key]} {reemplazar_guion_bajo(key)}"""
+    # )
 
 
 def calcular_jugador_con_la_mejor_estadistica(lista_jugadores: list, key: str):
@@ -461,7 +464,7 @@ def calcular_jugador_con_la_mejor_estadistica(lista_jugadores: list, key: str):
         None
     """
     bubble_sort_lite(lista_jugadores, key, "mayor")
-    separador()
+    
     mostrar_jugador_con_la_mejor_estadistica(lista_jugadores, key)
 
 
@@ -743,8 +746,7 @@ def calcular_posicion(lista_jugadores: list, key: str, indice_jugador: int) -> i
     for indice in range(len(left_list)):
         if (
             left_list[indice]["estadisticas"][key]
-            == lista_jugadores[indice_jugador]["estadisticas"][key]
-        ):
+            == lista_jugadores[indice_jugador]["estadisticas"][key]):
             posicion_jugador = indice + 1
 
     return posicion_jugador
@@ -770,23 +772,107 @@ def llamada_punto_23(lista_jugadores: list) -> None:
     for indice in range(len(lista_jugadores)):
         lista_jugador_posiciones = []
         lista_jugador_posiciones.append(lista_jugadores[indice]["nombre"])
-        lista_jugador_posiciones.append(
-            calcular_posicion(lista_jugadores, "puntos_totales", indice)
-        )
-        lista_jugador_posiciones.append(
-            calcular_posicion(lista_jugadores, "rebotes_totales", indice)
-        )
-        lista_jugador_posiciones.append(
-            calcular_posicion(lista_jugadores, "asistencias_totales", indice)
-        )
-        lista_jugador_posiciones.append(
-            calcular_posicion(lista_jugadores, "robos_totales", indice)
-        )
-        exportar_tabla_posiciones_csv(
-            lista_jugador_posiciones, "ranking_de_posiciones.csv"
-        )
+        lista_jugador_posiciones.append(calcular_posicion(lista_jugadores, "puntos_totales", indice))
+        lista_jugador_posiciones.append(calcular_posicion(lista_jugadores, "rebotes_totales", indice))
+        lista_jugador_posiciones.append(calcular_posicion(lista_jugadores, "asistencias_totales", indice))
+        lista_jugador_posiciones.append(calcular_posicion(lista_jugadores, "robos_totales", indice))
+        exportar_tabla_posiciones_csv(lista_jugador_posiciones, "ranking_de_posiciones.csv")
     separador()
     print('Se creo el archivo CSV.')
+
+
+"---------------------------------------- EJERCICIOS EXTRAS ---------------------------------------- "
+# 1 extra ---------------------------------------------------------------------------------------------
+
+'''
+Examen parcial Extra
+1. Determinar la cantidad de jugadores que hay por cada posición.
+Ejemplo:
+Base: 2
+Alero: 3
+'''
+def contar_cantidad_jugadores_por_posicion(lista_jugadores:list):
+    dict_posiciones = {}
+
+    for jugador in lista_jugadores:
+        posicion = jugador['posicion']
+        if posicion not in dict_posiciones:
+            dict_posiciones[posicion] = 1
+        dict_posiciones[posicion] += 1
+        
+    print(dict_posiciones)
+
+# 2 extra ---------------------------------------------------------------------------------------------
+'''
+2. Mostrar la lista de jugadores ordenadas por la cantidad de All-Star de forma
+descendente. La salida por pantalla debe tener un formato similar a este:
+Michael Jordan (14 veces All Star)
+Magic Johnson (12 veces All-Star)
+'''
+def mostrar_lista_jugadores_ordenados_por_cantidad_all_star(lista_jugadores:list):
+    formato_salida = '{Michael Jordan} ({14 veces All Star})'
+    diccionario = {}
+    lista = []
+    
+    for indice in range(len(lista_jugadores)):
+        lista_logros = lista_jugadores[indice]['logros']
+        for logro in lista_logros:
+            if re.search(r' veces All-Star',logro):
+                lista = re.findall(r'^[0-9]+',logro)
+                lista.append(int(lista[0]))
+                
+    lista.remove(lista[0])
+    return lista
+
+def ordenar_lista_all_stars(lista_jugadores:list):
+    lista = mostrar_lista_jugadores_ordenados_por_cantidad_all_star(lista_jugadores)
+    for jugador in lista:
+        for dato,valor in jugador.items():
+            print(dato, valor)
+        
+
+# 3 extra -------------------------------------------------------------------------------------
+'''
+3. Determinar qué jugador tiene las mejores estadísticas en cada valor. La salida
+por pantalla debe tener un formato similar a este:
+Mayor cantidad de temporadas: Karl Malone (19)
+Mayor cantidad de puntos totales: Karl Malone (36928)
+'''
+def mostrar_mejores_estadisticas(lista_jugadores):
+    lista_estadisticas = []
+    
+    for jugador in lista_jugadores:
+        estadisticas = jugador['estadisticas']
+        for estadistica in estadisticas:
+            lista_estadisticas.append(estadistica)
+        break
+        
+    for indice in range(len(lista_jugadores)):
+        calcular_jugador_con_la_mejor_estadistica(lista_jugadores,lista_estadisticas[indice])
+
+
+# 4 extra -------------------------------------------------------------------------------------
+'''4. Determinar qué jugador tiene las mejores estadísticas de todos.
+'''
+def mostrar_jugador_con_mejores_estadisticas():
+    pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 "--------------------------------------- END ---------------------------------------"
@@ -879,6 +965,12 @@ def menu_app(lista_jugadores):
                 mostrar_jugadores_ordenados_por_posicion(lista_jugadores, "posicion")
             case "23":
                 llamada_punto_23(lista_jugadores)
+            case '24':
+                contar_cantidad_jugadores_por_posicion(lista_jugadores)
+            case '25':
+                ordenar_lista_all_stars(lista_jugadores)
+            case '26':
+                mostrar_mejores_estadisticas(lista_jugadores)
             case "0":
                 break
 
@@ -899,3 +991,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+'''
+Examen parcial Extra
+1. Determinar la cantidad de jugadores que hay por cada posición.
+Ejemplo:
+Base: 2
+Alero: 3
+...
+2. Mostrar la lista de jugadores ordenadas por la cantidad de All-Star de forma
+descendente. La salida por pantalla debe tener un formato similar a este:
+Michael Jordan (14 veces All Star)
+Magic Johnson (12 veces All-Star)
+...
+3. Determinar qué jugador tiene las mejores estadísticas en cada valor. La salida
+por pantalla debe tener un formato similar a este:
+Mayor cantidad de temporadas: Karl Malone (19)
+Mayor cantidad de puntos totales: Karl Malon (36928)
+…
+4. Determinar qué jugador tiene las mejores estadísticas de todos.
+'''
